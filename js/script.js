@@ -83,3 +83,58 @@ function asideSectionTogglerBtn() {
     allSection[i].classList.toggle("open");
   }
 }
+
+/* ===== Project details modal ===== */
+// create modal markup and append to body
+const modalHtml = `
+<div class="project-modal" id="project-modal" aria-hidden="true">
+  <button class="modal-close" id="modal-close">✕</button>
+  <div class="modal-card">
+    <h3 id="modal-title"></h3>
+    <p id="modal-body"></p>
+  </div>
+</div>`;
+document.body.insertAdjacentHTML("beforeend", modalHtml);
+
+const modal = document.getElementById("project-modal");
+const modalTitle = document.getElementById("modal-title");
+const modalBody = document.getElementById("modal-body");
+const modalClose = document.getElementById("modal-close");
+
+function openProjectModal(title, body) {
+  modalTitle.textContent = title;
+  modalBody.textContent = body;
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
+}
+
+function closeProjectModal() {
+  modal.classList.remove("open");
+  modal.setAttribute("aria-hidden", "true");
+}
+
+modalClose.addEventListener("click", closeProjectModal);
+modal.addEventListener("click", function (e) {
+  if (e.target === modal) closeProjectModal();
+});
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Escape" && modal.classList.contains("open"))
+    closeProjectModal();
+});
+
+// wire view-details buttons
+document.addEventListener("click", function (e) {
+  const btn = e.target.closest(".view-details");
+  if (!btn) return;
+  const desc = btn.closest(".portfolio-desc");
+  if (!desc) return;
+  const title =
+    desc.getAttribute("data-title") ||
+    desc.querySelector("h4")?.textContent ||
+    "Project";
+  const full =
+    desc.getAttribute("data-full") ||
+    desc.querySelector("p")?.textContent ||
+    "";
+  openProjectModal(title, full);
+});
